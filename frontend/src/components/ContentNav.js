@@ -1,9 +1,14 @@
-function ContentNav({
-  dateSelect,
-  setDateSelect,
-  previousDateClickCountRef,
-  nextDateClickCountRef,
-}) {
+import { useContext } from "react";
+import TaskProvider from "./TaskContent";
+
+function ContentNav() {
+  const {
+    dateSelect,
+    nextDateClickCounter,
+    previousDateClickCounter,
+    setDateSelect,
+  } = useContext(TaskProvider);
+
   const dateObject = new Date(dateSelect[0], dateSelect[1] - 1, dateSelect[2]);
 
   // Get the day of the week (abbreviated)
@@ -26,18 +31,18 @@ function ContentNav({
     const currentDate = new Date();
     const clickedDate = new Date();
     if (nextOrPrev === "previous") {
-      previousDateClickCountRef.current += 1;
+      previousDateClickCounter.current += 1;
       clickedDate.setDate(
         currentDate.getDate() -
-          previousDateClickCountRef.current +
-          nextDateClickCountRef.current
+          previousDateClickCounter.current +
+          nextDateClickCounter.current
       );
     } else if (nextOrPrev === "next") {
-      nextDateClickCountRef.current++;
+      nextDateClickCounter.current++;
       clickedDate.setDate(
         currentDate.getDate() +
-          nextDateClickCountRef.current -
-          previousDateClickCountRef.current
+          nextDateClickCounter.current -
+          previousDateClickCounter.current
       );
       // const isSameDate =
       //   clickedDate.toDateString() === currentDate.toDateString();

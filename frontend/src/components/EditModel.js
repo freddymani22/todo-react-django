@@ -1,16 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios"; // Make sure to import axios
+import TaskProvider from "./TaskContent";
 
-function EditModel({
-  editModel,
-  setEditModel,
-  item,
-  setMessage,
-  dateSelect,
-  setIsLoading,
-}) {
+function EditModel({ editModel, setEditModel, item }) {
   const [updateTask, setUpdateTask] = useState(item.task);
   const [updateduration, setUpdateDuration] = useState(item.duration);
+
+  const { setIsLoading, dateSelect, setTasks } = useContext(TaskProvider);
 
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -28,7 +24,7 @@ function EditModel({
 
     async function updateData() {
       try {
-        const res = await fetch(url, {
+        await fetch(url, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -47,7 +43,7 @@ function EditModel({
         );
 
         if (response.status === 200) {
-          setMessage(response.data);
+          setTasks(response.data);
         }
       } catch (e) {
         console.log(e);

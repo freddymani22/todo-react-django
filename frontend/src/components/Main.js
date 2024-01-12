@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Authenticate from "./Authenticate";
 import Content from "./Content";
 import Loading from "../Loading";
+import TaskProvider from "./TaskContent";
 
 function Main() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,31 +60,35 @@ function Main() {
           <h1>left to do!!</h1>
         </section>
       )} */}
-
-      <main className="main">
-        <div className="header">
-          <h1>ToDos!</h1>
-        </div>
-        <div className="container">
-          {isLoading ? (
-            <Loading />
-          ) : isAuthenticated ? (
-            <Content
-              setDateSelect={setDateSelect}
-              dateSelect={dateSelect}
-              setIsAuthenticated={setIsAuthenticated}
-              message={message}
-              setMessage={setMessage}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              nextDateClickCountRef={nextDateClickCountRef}
-              previousDateClickCountRef={previousDateClickCountRef}
-            />
-          ) : (
-            <Authenticate setIsAuthenticated={setIsAuthenticated} />
-          )}
-        </div>
-      </main>
+      <TaskProvider.Provider
+        value={{
+          setDateSelect,
+          dateSelect,
+          setIsAuthenticated,
+          tasks: message,
+          setTasks: setMessage,
+          isLoading,
+          setIsLoading,
+          nextDateClickCounter: nextDateClickCountRef,
+          previousDateClickCounter: previousDateClickCountRef,
+        }}
+      >
+        <main className="main">
+          <div className="header">
+            <h1>ToDos!</h1>
+          </div>
+          <div className="container">
+            {isLoading ? (
+              <Loading />
+            ) : isAuthenticated ? (
+              <Content />
+            ) : (
+              <Authenticate />
+            )}
+          </div>
+        </main>
+      </TaskProvider.Provider>
+      ;
     </>
   );
 }

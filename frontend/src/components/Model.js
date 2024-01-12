@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios"; // Make sure to import axios
-function Model({
-  setMessage,
-  showModel,
-  setShowModel,
-  dateSelect,
-  setIsLoading,
-}) {
+import TaskProvider from "./TaskContent";
+
+function Model({ showModel, setShowModel }) {
+  const { dateSelect, setIsLoading, setTasks } = useContext(TaskProvider);
+
   const [task, setTask] = useState("");
   const [duration, setDuration] = useState("");
   const [time, setTime] = useState("");
@@ -27,7 +25,7 @@ function Model({
     const token = localStorage.getItem("token");
     async function postData() {
       try {
-        const res = await fetch(url, {
+        await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -46,7 +44,7 @@ function Model({
         );
 
         if (response.status === 200) {
-          setMessage(response.data);
+          setTasks(response.data);
         }
       } catch (e) {
         console.log(e);

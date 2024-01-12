@@ -1,24 +1,20 @@
 import axios from "axios";
+import { useContext } from "react";
+import TaskProvider from "./TaskContent";
 
-function DeleteModel({
-  SetShowDeleteModel,
-  showDeleteModel,
-  id,
-  setMessage,
-  dateSelect,
-  setIsLoading,
-}) {
+function DeleteModel({ SetShowDeleteModel, showDeleteModel, id }) {
+  const { setIsLoading, dateSelect, setTasks } = useContext(TaskProvider);
+
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const token = localStorage.getItem("token");
+
   function handleDelete() {
     SetShowDeleteModel((showMessage) => !showMessage);
-
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
-
-    const token = localStorage.getItem("token");
 
     async function deleteData() {
       setIsLoading(true);
       try {
-        const res = await fetch(`${BASE_URL}task-delete/${id}`, {
+        await fetch(`${BASE_URL}task-delete/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -35,7 +31,7 @@ function DeleteModel({
         );
 
         if (response.status === 200) {
-          setMessage(response.data);
+          setTasks(response.data);
         }
       } catch (e) {
         console.log(e);

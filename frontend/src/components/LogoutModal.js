@@ -1,4 +1,9 @@
-function LogoutModal({ setLogoutModal, setIsAuthenticated, logoutModal }) {
+import { useContext } from "react";
+import TaskProvider from "./TaskContent";
+
+function LogoutModal({ setLogoutModal, logoutModal }) {
+  const { setIsAuthenticated } = useContext(TaskProvider);
+
   function handleLogout() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);

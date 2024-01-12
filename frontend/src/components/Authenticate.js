@@ -1,10 +1,12 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import SignUp from "./SignUp";
+import TaskProvider from "./TaskContent";
 
-export default function Authenticate({ setIsAuthenticated }) {
+export default function Authenticate() {
   const [isSignUp, setIsSignUp] = useState(true);
+  const { setIsAuthenticated } = useContext(TaskProvider);
 
   function handleAuthToggle() {
     setIsSignUp((isSignIn) => !isSignIn);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ContentNav from "./ContentNav";
 import ContentHeader from "./ContentHeader";
 import Model from "./Model";
@@ -6,17 +6,11 @@ import DeleteModel from "./DeleteModel";
 import EmptyItem from "./EmptyItem";
 import EditModel from "./EditModel";
 import LogoutModal from "./LogoutModal";
+import TaskProvider from "./TaskContent";
 
-function Content({
-  setIsAuthenticated,
-  dateSelect,
-  setDateSelect,
-  message,
-  setMessage,
-  setIsLoading,
-  nextDateClickCountRef,
-  previousDateClickCountRef,
-}) {
+function Content() {
+  const { tasks } = useContext(TaskProvider);
+
   const [showModel, setShowModel] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
 
@@ -31,15 +25,10 @@ function Content({
   return (
     <section className="content">
       <ContentHeader handleAddToDoBtn={handleAddToDoBtn} />
-      <ContentNav
-        dateSelect={dateSelect}
-        setDateSelect={setDateSelect}
-        nextDateClickCountRef={nextDateClickCountRef}
-        previousDateClickCountRef={previousDateClickCountRef}
-      />
+      <ContentNav />
       <div className="content__task-list">
-        {message.length > 0 ? (
-          message
+        {tasks.length > 0 ? (
+          tasks
             .slice() // Create a shallow copy to avoid modifying the original array
             .sort((a, b) => {
               // First, sort by 'completed' property (true first)
@@ -49,15 +38,7 @@ function Content({
               // If 'completed' is the same, sort by 'task' property
               return a.task.localeCompare(b.task);
             })
-            .map((item) => (
-              <Task
-                item={item}
-                key={item.id}
-                setMessage={setMessage}
-                dateSelect={dateSelect}
-                setIsLoading={setIsLoading}
-              />
-            ))
+            .map((item) => <Task item={item} key={item.id} />)
         ) : (
           <EmptyItem />
         )}
@@ -65,25 +46,17 @@ function Content({
       <button className=" btn content__btn" onClick={handleLogout}>
         LOGOUT
       </button>
-      <Model
-        setMessage={setMessage}
-        showModel={showModel}
-        setShowModel={setShowModel}
-        dateSelect={dateSelect}
-        setIsLoading={setIsLoading}
-      />
-      <LogoutModal
-        setLogoutModal={setLogoutModal}
-        setIsAuthenticated={setIsAuthenticated}
-        logoutModal={logoutModal}
-      />
+      <Model showModel={showModel} setShowModel={setShowModel} />
+      <LogoutModal setLogoutModal={setLogoutModal} logoutModal={logoutModal} />
     </section>
   );
 }
 
 export default Content;
 
-function Task({ item, setMessage, dateSelect, setIsLoading }) {
+function Task({ item }) {
+  const { setTasks } = useContext(TaskProvider);
+
   const [showDeleteModel, SetShowDeleteModel] = useState(false);
   const [editModel, setEditModel] = useState(false);
 
@@ -110,8 +83,8 @@ function Task({ item, setMessage, dateSelect, setIsLoading }) {
           body: JSON.stringify(data),
         });
 
-        setMessage((message) =>
-          message.map((task) =>
+        setTasks((tasks) =>
+          tasks.map((task) =>
             task.id === item.id ? { ...task, completed: !task.completed } : task
           )
         );
@@ -121,7 +94,7 @@ function Task({ item, setMessage, dateSelect, setIsLoading }) {
       }
     }
 
-    updateData(); // Call updateData once after defining it
+    updateData();
   }
 
   return (
@@ -173,18 +146,12 @@ function Task({ item, setMessage, dateSelect, setIsLoading }) {
       <EditModel
         editModel={editModel}
         setEditModel={setEditModel}
-        setMessage={setMessage}
         item={item}
-        dateSelect={dateSelect}
-        setIsLoading={setIsLoading}
       />
       <DeleteModel
         id={item.id}
         showDeleteModel={showDeleteModel}
         SetShowDeleteModel={SetShowDeleteModel}
-        setMessage={setMessage}
-        dateSelect={dateSelect}
-        setIsLoading={setIsLoading}
       />
     </div>
   );
