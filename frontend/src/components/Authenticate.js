@@ -14,8 +14,9 @@ export default function Authenticate({ setIsAuthenticated }) {
     <div className="authenticate">
       <div className="authenticate__toggle-container">
         <button
+          to="signup"
           onClick={handleAuthToggle}
-          className={`authenticate__toggle authenticate__toggle--login ${
+          className={`authenticate__toggle authenticate__toggle--login pointer ${
             isSignUp ? "authenticate__toggle_off" : ""
           }`}
         >
@@ -47,11 +48,15 @@ function SignIn({ setIsAuthenticated }) {
   const [isFocusUsername, setIsFocusUsername] = useState(false);
   const [isFocusPassword, setIsFocusPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   function handleLoginDetails() {
     async function loginData() {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/login/", {
+        setIsLoading(true);
+        const res = await axios.post(`${BASE_URL}login/`, {
           username,
           password,
         });
@@ -61,6 +66,8 @@ function SignIn({ setIsAuthenticated }) {
       } catch (e) {
         console.log(e);
         setError(e.response.data);
+      } finally {
+        setIsLoading(false);
       }
     }
     loginData();
@@ -80,7 +87,7 @@ function SignIn({ setIsAuthenticated }) {
           type="text"
           className="input"
           id="username"
-          placeholder={isFocusUsername ? "" : "EMAIL"}
+          placeholder={isFocusUsername ? "" : "USERNAME"}
           value={username}
           onFocus={() => setIsFocusUsername(true)}
           onBlur={() => setIsFocusUsername(false)}
@@ -110,7 +117,7 @@ function SignIn({ setIsAuthenticated }) {
       </div>
 
       <button className="btn btn__authenticate" onClick={handleLoginDetails}>
-        LOGIN
+        {isLoading ? <div className="auth-loading"></div> : "LOGIN"}
       </button>
       <button className="authenticate__forgot-password">
         Forgot Password?

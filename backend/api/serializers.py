@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model, password_validation
 from tasks.models import Task
 from accounts.models import CustomUser
 
+from datetime import date
+
 
 class UserSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(
@@ -39,10 +41,15 @@ class UserSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'task', 'timestamp', 'duration']
+        fields = ['id', 'task', 'timestamp', 'duration', 'completed']
 
     def create(self, validated_data):
         user = self.context['request'].user
+        date_array = validated_data.pop('timestamp', None)
+        print(date_array)
+        if date_array:
+            validated_data['timestamp'] = date_array
+
         validated_data['user'] = user
         task = Task.objects.create(**validated_data)
         return task

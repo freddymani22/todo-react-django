@@ -57,19 +57,25 @@ export default function SignUp({ setIsSignUp }) {
   const [isFocusPassword1, setIsFocusPassword1] = useState(false);
   const [isFocusPassword2, setIsFocusPassword2] = useState(false);
   const [isAccCreated, setIsAccCreated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const singUpData = { username, email, password1, password2 };
+
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   function handleSignUpdetails(e) {
     e.preventDefault();
     async function postSignUpdata() {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/", singUpData);
+        setIsLoading(true);
+        const res = await axios.post(BASE_URL, singUpData);
         if (res.statusText === "Created") {
           setIsAccCreated(true);
         }
       } catch (e) {
         dispatch({ type: "error", payload: e.response.data });
+      } finally {
+        setIsLoading(false);
       }
     }
     postSignUpdata();
@@ -197,7 +203,7 @@ export default function SignUp({ setIsSignUp }) {
           className="btn btn__authenticate"
           onClick={(e) => handleSignUpdetails(e)}
         >
-          SIGNUP
+          {isLoading ? <div className="auth-loading"></div> : "SIGNUP"}
         </button>
       </form>
       <SignUpSuccessModal

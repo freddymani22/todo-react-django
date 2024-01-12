@@ -41,6 +41,22 @@ body {
   background-repeat: no-repeat;
 }
 
+::-webkit-scrollbar {
+  width: 0.8em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--shade-2);
+  border-radius: 80vw;
+  /* border: 0.25em solid var(--shade-3); */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--shade-3);
+  border-radius: 80vw;
+  border: 0.25em solid var(--shade-1);
+}
+
 .main {
   display: flex;
   align-items: center;
@@ -158,6 +174,7 @@ body {
   color: var(--shade-5);
   transition: all 0.3s ease-in-out;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .btn__authenticate {
@@ -245,7 +262,11 @@ body {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background-color: var(--shade-1);
+  background-image: linear-gradient(
+    to top right,
+    var(--shade-1),
+    var(--shade-3)
+  );
   display: grid;
   place-content: center;
   color: #fff;
@@ -254,11 +275,13 @@ body {
 .loader {
   width: 4rem;
   min-height: 4rem;
-  border: 0.6rem solid var(--shade-3);
+  border: 0.6rem solid var(--shade-5);
   border-left-color: transparent;
   border-right-color: transparent;
   border-radius: 50%;
   animation: spinner 0.8s infinite alternate;
+  margin: auto 0;
+  margin: 30vh 7.5vw;
 }
 
 @keyframes spinner {
@@ -364,9 +387,10 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--shade-3);
-  padding: 3.5em;
+  padding: 3em 1em;
   border-radius: 1.4em;
   border: 2px solid var(--shade-4);
+  max-width: 100vh;
 
   z-index: 10;
 }
@@ -413,7 +437,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(4px);
   z-index: 5;
   inset: 0;
 }
@@ -424,20 +448,21 @@ body {
   border-radius: 5px;
   color: var(--shade-1);
   padding: 0.3em 0.2em 0.3em 0.5em;
-  border: 2px solid var(--shade-1);
   border-left: 11px solid var(--shade-1);
   justify-content: space-between;
   align-items: center;
   letter-spacing: 0.1em;
+  cursor: pointer;
 }
 
-.taslk-item__details {
+.task-item__details {
   display: flex;
   flex-direction: column;
+  flex-basis: 65%;
 }
 
 .task-item:not(:first-child) {
-  margin-top: 7px;
+  margin-top: 0.6em;
 }
 
 .task-item__name {
@@ -484,6 +509,7 @@ body {
 }
 .message__sign-in {
   text-align: center;
+  padding: 0.8em;
 }
 
 .message__btn__cancel {
@@ -523,4 +549,36 @@ body {
 }
 .empty-state__img {
   width: 70%;
+}
+
+.task-item--name-complete {
+  text-decoration: line-through;
+  color: #1b272780;
+}
+.task-item--duration-complete {
+  color: #1b272780;
+}
+
+.task-item__details {
+  margin-right: auto;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.auth-loading {
+  width: 1rem;
+  min-height: 1em;
+  border: 0.15rem solid var(--shade-5);
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner 0.8s infinite alternate;
+}
+
+.signup-success {
+  padding: 3em;
+  display: flex;
+  flex-direction: column;
 }

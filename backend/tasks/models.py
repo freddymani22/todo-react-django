@@ -7,7 +7,7 @@ from accounts.models import CustomUser
 class Task(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     task = models.CharField(max_length=200)
-    timestamp = models.DateField(auto_now_add=True)
+    timestamp = models.DateField()
     completed = models.BooleanField(default=False)
     duration = models.IntegerField()
 

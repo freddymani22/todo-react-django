@@ -11,10 +11,11 @@ function Content({
   setIsAuthenticated,
   dateSelect,
   setDateSelect,
-  setIsToday,
-  isToday,
   message,
   setMessage,
+  setIsLoading,
+  nextDateClickCountRef,
+  previousDateClickCountRef,
 }) {
   const [showModel, setShowModel] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
@@ -33,20 +34,28 @@ function Content({
       <ContentNav
         dateSelect={dateSelect}
         setDateSelect={setDateSelect}
-        isToday={isToday}
-        setIsToday={setIsToday}
+        nextDateClickCountRef={nextDateClickCountRef}
+        previousDateClickCountRef={previousDateClickCountRef}
       />
       <div className="content__task-list">
         {message.length > 0 ? (
           message
             .slice() // Create a shallow copy to avoid modifying the original array
-            .sort((a, b) => a.task.localeCompare(b.task)) // Sort alphabetically based on the 'name' property (replace with the actual property you want to sort by)
+            .sort((a, b) => {
+              // First, sort by 'completed' property (true first)
+              if (a.completed !== b.completed) {
+                return a.completed ? -1 : 1;
+              }
+              // If 'completed' is the same, sort by 'task' property
+              return a.task.localeCompare(b.task);
+            })
             .map((item) => (
               <Task
                 item={item}
                 key={item.id}
                 setMessage={setMessage}
                 dateSelect={dateSelect}
+                setIsLoading={setIsLoading}
               />
             ))
         ) : (
@@ -61,6 +70,7 @@ function Content({
         showModel={showModel}
         setShowModel={setShowModel}
         dateSelect={dateSelect}
+        setIsLoading={setIsLoading}
       />
       <LogoutModal
         setLogoutModal={setLogoutModal}
@@ -73,7 +83,7 @@ function Content({
 
 export default Content;
 
-function Task({ item, setMessage, dateSelect }) {
+function Task({ item, setMessage, dateSelect, setIsLoading }) {
   const [showDeleteModel, SetShowDeleteModel] = useState(false);
   const [editModel, setEditModel] = useState(false);
 
@@ -83,12 +93,55 @@ function Task({ item, setMessage, dateSelect }) {
   function handleEdit() {
     setEditModel((val) => !val);
   }
+  function handleTaskClick() {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    const url = `${BASE_URL}task-update/${item.id}/`;
+    const data = { ...item, completed: !item.completed };
+    const token = localStorage.getItem("token");
+
+    async function updateData() {
+      try {
+        await fetch(url, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
+
+        setMessage((message) =>
+          message.map((task) =>
+            task.id === item.id ? { ...task, completed: !task.completed } : task
+          )
+        );
+      } catch (e) {
+        console.log(e);
+      } finally {
+      }
+    }
+
+    updateData(); // Call updateData once after defining it
+  }
 
   return (
     <div className="task-item">
-      <div className="task-item_details">
-        <p className="task-item__name">{item.task}</p>
-        <p className="task-item__duration">{item.duration} min</p>
+      <div className="task-item__details" onClick={handleTaskClick}>
+        <p
+          className={`task-item__name ${
+            item.completed ? "task-item--name-complete" : ""
+          }`}
+        >
+          {item.task}
+        </p>
+
+        <p
+          className={`task-item__duration ${
+            item.completed ? "task-item--duration-complete" : ""
+          }`}
+        >
+          {item.duration} min
+        </p>
       </div>
       <div className="task-item__btn">
         <svg
@@ -123,6 +176,7 @@ function Task({ item, setMessage, dateSelect }) {
         setMessage={setMessage}
         item={item}
         dateSelect={dateSelect}
+        setIsLoading={setIsLoading}
       />
       <DeleteModel
         id={item.id}
@@ -130,6 +184,7 @@ function Task({ item, setMessage, dateSelect }) {
         SetShowDeleteModel={SetShowDeleteModel}
         setMessage={setMessage}
         dateSelect={dateSelect}
+        setIsLoading={setIsLoading}
       />
     </div>
   );

@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
         if email:
             email = self.normalize_email(email)
         user = self.model(username=username, password=password, email=email,
-                          is_active=True, ** kwargs)
+                          is_active=True, is_superuser=is_superuser, **kwargs)
         if password and not is_superuser:
             try:
                 validate_password(password)
@@ -23,9 +23,9 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        # extra_fields.setdefault('is_superuser', True)
 
-        return self.create_user(username, password, email, ** extra_fields)
+        return self.create_user(username, password, email, is_superuser=True, ** extra_fields)
 
 
 class CustomUser(AbstractUser, PermissionsMixin):

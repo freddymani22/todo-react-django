@@ -6,7 +6,11 @@ function SignUpSuccessModal({ isAccCreated, setIsSignUp, setIsAccCreated }) {
 
   return (
     <>
-      <div className={`model message ${isAccCreated ? "" : "hidden"}`}>
+      <div
+        className={`model message ${
+          isAccCreated ? "signup-success" : "hidden"
+        }`}
+      >
         {/* <button className={"model-close"} onClick={handleSuccessModal}>
           &times;
         </button> */}

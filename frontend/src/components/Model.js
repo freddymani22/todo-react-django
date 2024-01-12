@@ -1,20 +1,29 @@
 import { useState } from "react";
 import axios from "axios"; // Make sure to import axios
-function Model({ setMessage, showModel, setShowModel, dateSelect }) {
+function Model({
+  setMessage,
+  showModel,
+  setShowModel,
+  dateSelect,
+  setIsLoading,
+}) {
   const [task, setTask] = useState("");
   const [duration, setDuration] = useState("");
+  const [time, setTime] = useState("");
 
-  const BASE_URL = "http://127.0.0.1:8000/api";
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   function handleModelClose() {
     setShowModel((showModel) => !showModel);
   }
 
   function handleForm(e) {
+    const dateArray = dateSelect.join("-");
     e.preventDefault();
+    setIsLoading(true);
     setShowModel((showModel) => !showModel);
-    const url = `${BASE_URL}/task-create/`;
-    const data = { task: task, duration: duration };
+    const url = `${BASE_URL}task-create/`;
+    const data = { task: task, duration: duration, timestamp: dateArray };
     const token = localStorage.getItem("token");
     async function postData() {
       try {
@@ -26,8 +35,9 @@ function Model({ setMessage, showModel, setShowModel, dateSelect }) {
           },
           body: JSON.stringify(data),
         });
+
         const response = await axios.get(
-          `http://localhost:8000/api/${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
+          `${BASE_URL}/${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -38,8 +48,10 @@ function Model({ setMessage, showModel, setShowModel, dateSelect }) {
         if (response.status === 200) {
           setMessage(response.data);
         }
-      } catch {
-        console.log("error");
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
     postData();
@@ -68,11 +80,18 @@ function Model({ setMessage, showModel, setShowModel, dateSelect }) {
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
           />
+          <input
+            placeholder="DURATION"
+            className="input"
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          />
           <button
             className="btn model__form-btn"
             onClick={(e) => handleForm(e)}
           >
-            ADD TASK
+            ADD
           </button>
         </form>
       </div>

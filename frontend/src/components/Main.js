@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Authenticate from "./Authenticate";
 import Content from "./Content";
@@ -10,7 +10,9 @@ function Main() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState([]);
   const [dateSelect, setDateSelect] = useState(getTodayDate);
-  const [isToday, setIsToday] = useState(true);
+
+  const nextDateClickCountRef = useRef(0);
+  const previousDateClickCountRef = useRef(0);
 
   function getTodayDate() {
     const dateToday = new Date();
@@ -20,7 +22,11 @@ function Main() {
     return [year, month, day];
   }
 
+  // Access the environment variable
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   useEffect(() => {
+    setIsLoading(true);
     async function fetchData() {
       const token = localStorage.getItem("token");
       const headers = {
@@ -29,7 +35,7 @@ function Main() {
       let response;
       try {
         response = await axios.get(
-          `http://localhost:8000/api/${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
+          `${BASE_URL}${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
           {
             headers,
           }
@@ -38,13 +44,13 @@ function Main() {
           setMessage(response.data);
           setIsAuthenticated(true);
         }
-        // Handle successful response
       } catch (error) {
       } finally {
+        setIsLoading(false);
       }
     }
     fetchData();
-  }, [setMessage, isAuthenticated, dateSelect]);
+  }, [setMessage, isAuthenticated, dateSelect, BASE_URL]);
   return (
     <>
       {/* {!isAuthenticated && (
@@ -53,25 +59,26 @@ function Main() {
           <h1>left to do!!</h1>
         </section>
       )} */}
+
       <main className="main">
         <div className="header">
           <h1>ToDos!</h1>
         </div>
         <div className="container">
-          {isAuthenticated ? (
-            isLoading ? (
-              <Loading />
-            ) : (
-              <Content
-                setIsToday={setIsToday}
-                isToday={isToday}
-                setDateSelect={setDateSelect}
-                dateSelect={dateSelect}
-                setIsAuthenticated={setIsAuthenticated}
-                message={message}
-                setMessage={setMessage}
-              />
-            )
+          {isLoading ? (
+            <Loading />
+          ) : isAuthenticated ? (
+            <Content
+              setDateSelect={setDateSelect}
+              dateSelect={dateSelect}
+              setIsAuthenticated={setIsAuthenticated}
+              message={message}
+              setMessage={setMessage}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              nextDateClickCountRef={nextDateClickCountRef}
+              previousDateClickCountRef={previousDateClickCountRef}
+            />
           ) : (
             <Authenticate setIsAuthenticated={setIsAuthenticated} />
           )}

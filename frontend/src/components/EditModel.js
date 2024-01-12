@@ -1,11 +1,18 @@
 import { useState } from "react";
 import axios from "axios"; // Make sure to import axios
 
-function EditModel({ editModel, setEditModel, item, setMessage, dateSelect }) {
+function EditModel({
+  editModel,
+  setEditModel,
+  item,
+  setMessage,
+  dateSelect,
+  setIsLoading,
+}) {
   const [updateTask, setUpdateTask] = useState(item.task);
   const [updateduration, setUpdateDuration] = useState(item.duration);
 
-  const BASE_URL = "http://127.0.0.1:8000/api/task-update/";
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   function handleModelClose() {
     setEditModel((showModel) => !showModel);
@@ -13,8 +20,9 @@ function EditModel({ editModel, setEditModel, item, setMessage, dateSelect }) {
 
   function handleForm(e) {
     e.preventDefault();
+    setIsLoading(true);
     setEditModel((showModel) => !showModel);
-    const url = `${BASE_URL}${item.id}/`;
+    const url = `${BASE_URL}task-update/${item.id}/`;
     const data = { task: updateTask, duration: updateduration };
     const token = localStorage.getItem("token");
 
@@ -30,7 +38,7 @@ function EditModel({ editModel, setEditModel, item, setMessage, dateSelect }) {
         });
 
         const response = await axios.get(
-          `http://localhost:8000/api/${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
+          `${BASE_URL}${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,6 +51,8 @@ function EditModel({ editModel, setEditModel, item, setMessage, dateSelect }) {
         }
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -75,7 +85,7 @@ function EditModel({ editModel, setEditModel, item, setMessage, dateSelect }) {
             className="btn model__form-btn"
             onClick={(e) => handleForm(e)}
           >
-            ADD TASK
+            SAVE
           </button>
         </form>
       </div>

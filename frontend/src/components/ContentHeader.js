@@ -2,7 +2,7 @@ function ContentHeader({ handleAddToDoBtn }) {
   return (
     <div className="content__header">
       <p className="content__header__text">TASK LISTS</p>
-      <button className="add-icon" onClick={handleAddToDoBtn}>
+      <button className="add-icon pointer" onClick={handleAddToDoBtn}>
         <svg
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"

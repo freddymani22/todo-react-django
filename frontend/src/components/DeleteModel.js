@@ -6,14 +6,17 @@ function DeleteModel({
   id,
   setMessage,
   dateSelect,
+  setIsLoading,
 }) {
   function handleDelete() {
     SetShowDeleteModel((showMessage) => !showMessage);
 
-    const BASE_URL = "http://127.0.0.1:8000/api/";
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
+
     const token = localStorage.getItem("token");
 
     async function deleteData() {
+      setIsLoading(true);
       try {
         const res = await fetch(`${BASE_URL}task-delete/${id}`, {
           method: "DELETE",
@@ -22,7 +25,6 @@ function DeleteModel({
             Authorization: `Bearer ${token}`,
           },
         });
-
         const response = await axios.get(
           `${BASE_URL}${dateSelect[0]}/${dateSelect[1]}/${dateSelect[2]}/`,
           {
@@ -37,6 +39,8 @@ function DeleteModel({
         }
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
     deleteData();
