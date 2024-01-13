@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import axios from "axios"; // Make sure to import axios
-import TaskProvider from "./TaskContent";
+import { useTasks } from "./TaskContext";
 
 function EditModel({ editModel, setEditModel, item }) {
   const [updateTask, setUpdateTask] = useState(item.task);
   const [updateduration, setUpdateDuration] = useState(item.duration);
 
-  const { setIsLoading, dateSelect, setTasks } = useContext(TaskProvider);
+  const { setIsLoading, dateSelect, setTasks } = useTasks();
 
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 

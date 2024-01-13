@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import TaskProvider from "./TaskContent";
+import { useTasks } from "./TaskContext";
 
 function ContentNav() {
   const {
@@ -7,7 +6,7 @@ function ContentNav() {
     nextDateClickCounter,
     previousDateClickCounter,
     setDateSelect,
-  } = useContext(TaskProvider);
+  } = useTasks();
 
   const dateObject = new Date(dateSelect[0], dateSelect[1] - 1, dateSelect[2]);
 

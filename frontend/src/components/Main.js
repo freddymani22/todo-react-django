@@ -1,29 +1,21 @@
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 
 import Authenticate from "./Authenticate";
 import Content from "./Content";
 import Loading from "../Loading";
-import TaskProvider from "./TaskContent";
+import { useTasks } from "./TaskContext";
 
 function Main() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState([]);
-  const [dateSelect, setDateSelect] = useState(getTodayDate);
+  const {
+    setIsLoading,
+    dateSelect,
+    setTasks,
+    setIsAuthenticated,
+    isAuthenticated,
+    isLoading,
+  } = useTasks();
 
-  const nextDateClickCountRef = useRef(0);
-  const previousDateClickCountRef = useRef(0);
-
-  function getTodayDate() {
-    const dateToday = new Date();
-    const year = dateToday.getFullYear();
-    const month = dateToday.getMonth() + 1;
-    const day = dateToday.getDate();
-    return [year, month, day];
-  }
-
-  // Access the environment variable
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   useEffect(() => {
@@ -42,7 +34,7 @@ function Main() {
           }
         );
         if (response.status === 200) {
-          setMessage(response.data);
+          setTasks(response.data);
           setIsAuthenticated(true);
         }
       } catch (error) {
@@ -51,7 +43,14 @@ function Main() {
       }
     }
     fetchData();
-  }, [setMessage, isAuthenticated, dateSelect, BASE_URL]);
+  }, [
+    setTasks,
+    isAuthenticated,
+    dateSelect,
+    setIsAuthenticated,
+    setIsLoading,
+    BASE_URL,
+  ]);
   return (
     <>
       {/* {!isAuthenticated && (
@@ -60,34 +59,21 @@ function Main() {
           <h1>left to do!!</h1>
         </section>
       )} */}
-      <TaskProvider.Provider
-        value={{
-          setDateSelect,
-          dateSelect,
-          setIsAuthenticated,
-          tasks: message,
-          setTasks: setMessage,
-          isLoading,
-          setIsLoading,
-          nextDateClickCounter: nextDateClickCountRef,
-          previousDateClickCounter: previousDateClickCountRef,
-        }}
-      >
-        <main className="main">
-          <div className="header">
-            <h1>ToDos!</h1>
-          </div>
-          <div className="container">
-            {isLoading ? (
-              <Loading />
-            ) : isAuthenticated ? (
-              <Content />
-            ) : (
-              <Authenticate />
-            )}
-          </div>
-        </main>
-      </TaskProvider.Provider>
+      <main className="main">
+        <header className="header">
+          <h1>ToDos!</h1>
+        </header>
+
+        <section className="container">
+          {isLoading ? (
+            <Loading />
+          ) : isAuthenticated ? (
+            <Content />
+          ) : (
+            <Authenticate />
+          )}
+        </section>
+      </main>
       ;
     </>
   );

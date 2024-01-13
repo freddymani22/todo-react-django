@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import ContentNav from "./ContentNav";
 import ContentHeader from "./ContentHeader";
 import Model from "./Model";
@@ -6,10 +6,10 @@ import DeleteModel from "./DeleteModel";
 import EmptyItem from "./EmptyItem";
 import EditModel from "./EditModel";
 import LogoutModal from "./LogoutModal";
-import TaskProvider from "./TaskContent";
+import { useTasks } from "./TaskContext";
 
 function Content() {
-  const { tasks } = useContext(TaskProvider);
+  const { tasks } = useTasks();
 
   const [showModel, setShowModel] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
@@ -55,7 +55,7 @@ function Content() {
 export default Content;
 
 function Task({ item }) {
-  const { setTasks } = useContext(TaskProvider);
+  const { setTasks } = useTasks();
 
   const [showDeleteModel, SetShowDeleteModel] = useState(false);
   const [editModel, setEditModel] = useState(false);

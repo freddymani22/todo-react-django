@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import axios from "axios"; // Make sure to import axios
-import TaskProvider from "./TaskContent";
+import { useTasks } from "./TaskContext";
 
 function Model({ showModel, setShowModel }) {
-  const { dateSelect, setIsLoading, setTasks } = useContext(TaskProvider);
+  const { dateSelect, setIsLoading, setTasks } = useTasks();
 
   const [task, setTask] = useState("");
   const [duration, setDuration] = useState("");

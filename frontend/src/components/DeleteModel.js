@@ -1,9 +1,9 @@
 import axios from "axios";
-import { useContext } from "react";
-import TaskProvider from "./TaskContent";
+
+import { useTasks } from "./TaskContext";
 
 function DeleteModel({ SetShowDeleteModel, showDeleteModel, id }) {
-  const { setIsLoading, dateSelect, setTasks } = useContext(TaskProvider);
+  const { setIsLoading, dateSelect, setTasks } = useTasks();
 
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const token = localStorage.getItem("token");
